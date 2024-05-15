@@ -1,0 +1,78 @@
+---
+title: 'Workshop 2: Using ggplot2 for Communication'
+author: "Jude Loughran"
+date: "2024-05-15"
+output: html_document
+---
+#Workshop 2: Using ggplot2 for Communication
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Install and load tidyverse packages
+```{r}
+library("tidyverse")
+```
+
+##Labels 
+Good labels on plots can help communicate key findings and comply with formatting requirements of an outlet (scientific journal). In "ggplot2" labels can be added with the "labs()" function.
+
+Let's start with a title.
+```{r}
+ggplot(mpg,aes(displ,hwy)) +
+  geom_point(aes(color=class)) +
+  geom_smooth(se.e=FALSE) +
+  labs(title="Fuel efficiency generally decreases with engine size")
+```
+If you want to add more text you can use other functions:
+1)"Subtitle" - This adds more details in a smaller font under the title.
+2)"Caption" - This adds text at the bottom right of the plot. 
+```{r}
+ggplot(mpg,aes(displ,hwy)) +
+  geom_point(aes(color=class)) +
+  geom_smooth(se=FALSE) +
+  labs(
+    title="Fuel efficiency generally decreases with engine size",
+    subtitle="Two seaters (sports cars) are an exception because of their light weight",
+    caption="Data from fueleconomy.gov"
+  )
+```
+You can also use "labs()" to replace axis labels and legend titles.
+```{r}
+ggplot(mpg,aes(displ,hwy)) +
+  geom_point(aes(colour=class)) +
+  geom_smooth(se=FALSE) +
+  labs(
+    x="Engine displacement(L)",
+    y="Highway fuel economy(mpg)",
+    colour="Car type"
+  )
+```
+For more information read the "ggplot2" help.
+
+#Annotations 
+To add text to the plot itself you would use "geom_text()". This works the same way "geom_point()". This is a good function as it lets you to pull data values out from the data itself and include it in the plot.
+```{r}
+best_in_class<- mpg %>%
+  group_by(class)%>%
+  filter(row_number(desc(hwy))== 1)
+
+ggplot(mpg,aes(displ,hwy)) +
+  geom_point(aes(colour=class)) +
+  geom_text(aes(label=model),data = best_in_class)
+```
+To handle the label overlap you can use "nudge()" to move the text a certain amount. 
+
+Labels allow for customisation and actions like highlighting the minimum or maximum values which you can get using base R packages.
+
+##Scales 
+Changing the default scales on "ggplot2" can help you customise your plots and help to convey the main message of your resutls.
+
+Normally, "ggplot2" automatically adds scales but when you type
+```{r}
+ggplot(mpg,aes(displ,hwy)) +
+  geom_point(aes(colour=class))
+```
+"Ggplot2" adds default scales behind the scenes, but if you want to tweak them you can do by.
+----------------------------------------

@@ -1,0 +1,14 @@
+---
+title: 'Workshop 3: Data Wrangling'
+author: "Jude Loughran"
+date: "2024-05-16"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Install and load tidyverse packages
+```{r}
+library("tidyverse")
+```
