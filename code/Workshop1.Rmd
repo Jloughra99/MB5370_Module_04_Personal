@@ -4,7 +4,7 @@ Author: "Jude Loughran"
 Output: html_document
 Date: "14/05/2024"
 ---
-Workshop 1:Dataviz in R
+Workshop 1: Dataviz in R
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
