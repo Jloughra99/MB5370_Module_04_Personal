@@ -469,95 +469,94 @@ dataset rather than a count
 ggplot(data=diamonds) + 
   geom_bar(mapping=aes(x=cut,y=stat(prop),group=1))
 ```
-Question: does anyone get the warning that's in the workbook?
-Warning: `stat(prop)` was deprecated in ggplot2 3.4.0.
-If so, can use # geom_bar(mapping = aes(x = cut, y = stage(after_stat = prop), group = 1))
+Question: Does anyone get the warning that's in the workbook?
+Warning: "stat(prop)"` was deprecated in ggplot2 3.4.0.
+If so, can use "geom_bar(mapping = aes(x = cut, y = stage(after_stat = prop), 
+group = 1))"
 
-# Plotting statistical details
+#Plotting statistical details
+Can also use the "stat_summary" argument to show more about transformations
 ```{r}
-ggplot(data = diamonds) + 
+ggplot(data=diamonds) + 
   stat_summary(
-    mapping = aes(x = cut, y = depth),
-    fun.min = min,
-    fun.max = max,
-    fun = median
+    mapping=aes(x=cut,y=depth),
+    fun.min=min,
+    fun.max=max,
+    fun=median
   )
 ```
 
-
-# Aesthetic adjustments adjustments
+#Aesthetic adjustments adjustments
 Another way to boost the way you can convey information with plots using ggplot2 is to use aesthetics like colour or fill to change aspects of bar colours. We already did this once, but there are multiple options available to you, including changing the fill our outline colours.
-
 ```{r}
-ggplot(data = diamonds) + 
-  geom_bar(mapping = aes(x = cut, colour = cut))
-ggplot(data = diamonds) + 
-  geom_bar(mapping = aes(x = cut, fill = cut))
+ggplot(data=diamonds) + 
+  geom_bar(mapping=aes(x=cut,colour=cut))
+ggplot(data=diamonds) + 
+  geom_bar(mapping=aes(x=cut,fill=cut))
 ```
-Question: Does anyone notice anything different in the colour scheme of this plot?
-(Hint: It's in the viridis colour palette (colour blind friendly), but why is it different from the colour palette we used earlier?)
+Question: Does anyone notice anything different in the colour scheme of this 
+plot?
+(Hint: It's in the viridis colour palette (colour blind friendly), but why is it
+different from the colour palette we used earlier?)
+
 Check out the difference:
 ```{r}
-ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
-  geom_point(mapping = aes(color = class)) 
+ggplot(data = mpg,mapping=aes(x=displ,y=hwy)) + 
+  geom_point(mapping=aes(color=class)) 
 
-ggplot(data = diamonds, mapping = aes(x = color, y = depth)) + 
-  geom_point(mapping = aes(color = cut)) 
+ggplot(data=diamonds,mapping=aes(x=color,y=depth)) + 
+  geom_point(mapping=aes(color=cut)) 
 ```
 
-
-# Filling by a variable
-Now try using these aesthetics to colour by another variable like clarity. Notice how the stacking is done automatically. This is done behind the scenes with a position argument.
+#Filling by a variable
+Now try using these aesthetics to colour by another variable like clarity. 
+Notice how the stacking is done automatically. This is done behind the scenes
+with a position argument.
 ```{r}
-ggplot(data = diamonds) + 
-  geom_bar(mapping = aes(x = cut, fill = clarity))
+ggplot(data=diamonds) + 
+  geom_bar(mapping=aes(x=cut,fill=clarity))
 ```
 
-
-# To alter transparency (alpha)
+#To alter transparency (alpha)
+Ability to make "position adjustments" is crucial as allows your customise plots
+in 4 ways:
+1)"Identify" (raw data)
+Using "position="identity"" able you to place each object EXACTLY where it 
+in the context of the graph. This is vital for chart points (scatter) but does
+not work for bar plots as too much information. So in this case need to change
+the bar aesthetic 
 ```{r}
-ggplot(data = diamonds, mapping = aes(x = cut, fill = clarity)) + 
-  geom_bar(alpha = 1/5, position = "identity")
+ggplot(data=diamonds,mapping=aes(x=cut,fill=clarity)) + 
+  geom_bar(alpha=1/5,position="identity")
 ```
-
-
-# To color the bar outlines with no fill color
+#To color the bar outlines with no fill color
 ```{r}
-ggplot(data = diamonds, mapping = aes(x = cut, colour = clarity)) + 
-  geom_bar(fill = NA, position = "identity")
+ggplot(data=diamonds,mapping=aes(x=cut,colour=clarity)) + 
+  geom_bar(fill=NA,position="identity")
 ```
 
-
-# Position adjustments
-position = "fill" works like stacking, but makes each set of stacked bars the same height.
+#Position adjustments
+2)"Fill" (changes heights)
+position="fill" works like stacking, but makes each set of stacked bars the same
+height.
 ```{r}
-ggplot(data = diamonds) + 
-  geom_bar(mapping = aes(x = cut, fill = clarity), position = "fill")
+ggplot(data=diamonds) + 
+  geom_bar(mapping=aes(x=cut,fill=clarity),position="fill")
 ```
 
-
-# position = "dodge" 
-Places overlapping objects directly beside one another.
+#Position="dodge" 
+3)"Dodge" (doesn't put things on top of each other)
+"Position=dodge"" places overlapping objects directly beside each other places 
+overlapping objects directly beside one another.
 ```{r}
-ggplot(data = diamonds) + 
-  geom_bar(mapping = aes(x = cut, fill = clarity), position = "dodge")
+ggplot(data=diamonds) + 
+  geom_bar(mapping=aes(x=cut,fill=clarity),position="dodge")
 ```
-
 # Jittering
-position = "jitter" adds a small amount of random noise to each point to avoid overplotting when points overlap. This is useful for scatterplots but not barplots.
+4)"Jitter" 
+Position = "jitter" adds a small amount of random noise to each point to avoid overplotting when points overlap. This is useful for scatterplots but not barplots.
 ```{r}
-ggplot(data = mpg) + 
-  #geom_point(mapping = aes(x = displ, y = hwy), position = "jitter")
-  geom_point(mapping = aes(x = displ, y = hwy))
+ggplot(data=mpg) + 
+  #geom_point(mapping=aes(x=displ,y=hwy),position="jitter")
+  geom_point(mapping=aes(x=displ,y=hwy))
 ```
-
-
-
-
-
-
-
-
-
-
-
