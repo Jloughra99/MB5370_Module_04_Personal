@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Tibbles are used in place of traditional data frames. They are slightly adjusted data frames designed to keep up with recent advances in R. Tibbles allow us to handle issues associated with aging program languages without breaking existing codes. So from now we are learning how to used tibbles in the "tidyverse".
 
-##Tidying dats using "Tidyr"
+##Tidying data using "Tidyr"
 This section is going to show you how to organize data into tidy data which can be used in the "tidyverse". Tidying data lets us spend more time on analysis rather than data manipulation.
 
 Now you will be introduced to tidy data and the associated tools in the "tidyr" package. "Tidyr" is a core part of "tidyverse". First remember to load "tidyverse".
@@ -18,54 +18,562 @@ Now you will be introduced to tidy data and the associated tools in the "tidyr" 
 library("tidyverse")
 ```
 
-```{r QFish shark}
-#Saved fixed raw data into a .CSV to data folder and import into R
-QFish
+#Tidy Data
+There are lots of ways to show data but not all are easy to use for analysis. For example the format of a field datasheet might be convenient for data collection and entry but it might not be useful way to display the data when it's time for analysis. The process of rearranging data to a format more appropriate for analysis is called "tidying".
+
+Let’s go over what makes a tidy dataset and why you always should strive to get your data into a tidy format. Note: here we’ve seen ‘tibble’ for the first time.
+
+To make a dataset tidy you have to follow these 3 interrelated rules;
+1)Each variable must have its own column.
+2)Each observation must have its own row.
+3)Each value must have its own cell.
+
+These rules are interrelated because it's impossible to only satisfy 2/3. The interrelationship leads to an even simpler set of practical instructions:
+1)Put each dataset in a tibble (special dataframe)
+2)Put each variable in a column.
+
+Now, why do we care about having tidy data? Because tidy data is useful data and here is why:
+1)Having a consistent data structure makes it easier to learn the tools that work with it.
+2)Having your variables in columns allows R to use its ability to work with vectors of values. This makes transforming tidy data a smoother process.
+
+When working with tidy datasets the key to know is when filtering data, summarising data and using functions like "group" or "colour" in "ggplot2" is possible with a dataframe but is IMPOSSIBLE when not in a format. 
+
+NOTE:"%>%" is a pipe. A pipe designed to help you better understand what your code is doing. It takes the data (LEFT of the pipe) and applies the function (RIGHT of the pipe). There are 2 types of pipes:
+1)"%>%": Only works in "tidyr" and "magrittr"
+2)"|>": This is brand new to R
+
+For now, you'll take the data, use a pipe and apply a function to it, specifying arguments inside the function. An example is:
+"table1 %>% 
+  mutate(rate = cases / population * 10000)"
+OR
+"table1 %>% 
+  count(year, wt = cases"
+  
+Understanding whether the dataframe structure is tidy or not is a FUNDAMENTAL SKILL. 
+
+#Exercise 1
+1)For each of the sample tables, describe what each observation and each column represents.
+
+2)Sketch out the processes you would use to calculate the rate for table2 and table3. You will need to perform four operations:
+A)Extract the number of TB cases per country per year
+B)Extract the matching population per country per year
+C)Divide cases by population, and multiply by 10,000
+D)Store back in the appropriate place
+
+#Pivoting Data to make it Tidy 
+You will most likely encounter untidy dataset as many people aren't familiar with the concept of tidy data, and the format in which data is collected isn't always done with future analyses in mind. 
+
+So let’s dive in. What should we do with the dataset you’ve collected? How should we transform it to get it into a structure where we can start to do things to it?
+
+When tidying data there are several steps:
+Step #1) UNDERSTANDING WHAT EACH VARIABLE AND OBSERVATION ACTUALLY MEANS. Sometimes it's obvious and other times consulting is necessary.
+
+And often the person who knows the most about the data is YOU! So while learning how to tidy data in R is critical, the way in which you enter your data into excel is also vital! 
+
+The understanding of data structures can translate into better data entry. Once you understand the data you're looking at you can move to the next step. 
+
+Step #2) Resolving one of the two common issues with untidy data. These are:
+1)One variable is spread across multiple columns
+2)One observation is scattered across multiple rows
+
+To fix these you will have to pivot the data into a tidy form using 2 functions in "tidyr":
+1)"Pivot_longer()"
+2)'Pivot_wider()"
+
+#Lengthening Datasets
+Pivoting the data frame into a lonfer form is the most common tidying issue. "Pivoting_longer()" makes datasets longer by upping the number of rows and decreasing the number of columns, solving those common problems of data values in the variables name (e.g wk1, wk2, wk3, etc.).
+
+Using "pvot_longer" splits a dataset by column and reforms it into the tidy format of observations as rows, variables as columns and values as cell entries. This makes the dataset longer instead of wider.
+
+Trying this out.
+```{r loading "billboard" data}
+data(billboard) 
+#This is the dataset from the workbook.
+head(billboard)
+glimpse(billboard)
+summary(billboard)
 ```
-#Tidying QFish data
-Pivot the data to make it neater 
-```{r 2001}
-Year2001 <- QFish |>
-  select(Area, starts_with("2001"))
+REMEMBER the first step in evaluating data is to understand what each observation means so it can be represented appropriately.
 
-colnames(Year2001) <- unlist(Year2001[1,])
+In the "billboard" dataset, each observation is a song. The first 3 columns ("artist", "track" and "date.entered") are variables that describe the song. We then have 76 columns ("wk1-76") that describe the rank of the song in each week. Here the column names are one varaible (the "week") and the cell vales are another (the "rank"). To tidy this dataset we are using "pivot_longer".
 
-Year2001 <-
-  Year2001 |>
-  slice(-1) |>
-  rename(Area = Catch) |>
-  mutate(Year = 2001)
+This is the case where actual data VALUES (wk1, wk2 etc) are in the column name, with each observation (row) being a song. We need to have the data in a format where each row is ab observation (so-called long format). See below
+```{r "pivot_longer"}
+billboard |>
+  pivot_longer(
+     cols=starts_with("wk"),
+     names_to="week",
+     values_to="rank"
+  )
+```
+As you can see in the above code snippet, there are 3 key arguments to the "pivot_longer()" function:
+1)"Cols": Specifies the columns you want to pivot (NOT variables).
+2)"Names_to()": Names the variables stored in the column names.
+3)"Values_to()": Names the variable stored in the cell values.
+
+NOTE: In the code "week" and "rank" are quoted because they are new variables that we are creating, they don’t exist yet in the data when we run the pivot_longer() call.
+
+If your dataset has NA values in it, you can ask "pivot_longer" to remove them by adding the argument "values_drop_na=TRUE". See below 
+```{r "values_drop_na=TRUE"}
+billboard |>
+  pivot_longer(
+    cols=starts_with("wk"),
+    names_to = ("week"),
+    values_to = ("rank"),
+    values_drop_na = TRUE
+  )
+```
+There are now far fewer rows in total. The data is now tidy.
+
+NOTE: However, do note that there are still some things we could do to improve the format to make future computation easier. Such as converting some of our values from strings to numbers using "mutate()" and "parse_number()".
+
+#Pivoting Longer
+We have just seem how pivoting can help re-shape data but what does pivoting the data actually do?
+
+Starting with an easy dataset and we are introducing a new term "tribble". This is a type of dataframe that allows the construction of small tibbles by hand. Follow the example below.
+```{r tribbles}
+df <- tribble(
+  ~id,  ~bp1, ~bp2,
+   "A",  100,  120,
+   "B",  140,  115,
+   "C",  120,  125
+)
+```
+We have just created a dataset called "df" with 3 variables and their associated values. However you want the new (tidy) dataset to have 3 variables:
+1)"id": This already exists
+2)"measurement": The column names
+3)"value": The cell values
+
+To do this we need to PIVOT "df" longer.
+```{r pivoting df dataset}
+df |>
+  pivot_longer(
+    cols=bp1:bp2,
+    names_to = "Measurement",
+    values_to = "Values"
+  )
+```
+To try visualize how this re-shaping happens column by column. The values in a column which was already a variable in the orignal dataset ("id") need to be repeated, once for each column that is pivoted.
+
+Additionally the original column  names in "df" ("bp1"and "bp2") now become values in a new variable whose name is defines by the "names_to" argument and these values need to be repeated once for each row in the orignal dataset. 
+
+Finally, the cell values also become a new variable with a name we defined by the "values_to" argument, These are unwound row by row. 
+
+#Widening Datasets 
+Widening a dataset is the opposite of lengthening one. This is done by "pivot_wider()" which allows us to handle an observation if it is scattered across multiple rows. 
+
+Using an example dataset called "cms_patient_experience" to show this function. 
+```{r imporing a dataset}
+data(cms_patient_experience)
+head(cms_patient_experience)
+glimpse(cms_patient_experience)
+summary(cms_patient_experience)
+```
+None of the columns make good variable names so we are using "measure_cd" as the source for the new column names for now but in reallife it is a good idea to make your own variable names.
+
+"Pivot_wider()" provides the existing columns that define that values ("values_from") and the column name ("names_from").
+```{r "pivot_wider()"}
+cms_patient_experience |>
+  pivot_wider(
+    names_from = measure_cd,
+    values_from = prf_rate
+  )
+```
+This still doesn't look right. There are still multiple rows for each organization. That's because we also need to tell "pivot_wider" which column/columns have vales that uniquely identify each row; in this case those are the variables starting with "org".
+```{r tweaking "pivor_wider()"}
+cms_patient_experience |>
+  pivot_wider(
+    id_cols = starts_with("org"),
+    names_from = measure_cd,
+    values_from = prf_rate
+  )
+```
+This is the correct outout.
+
+#Pivoting Wider
+To understand what "pivot_wider()" does to our data, lets again use an easy example. This time we have 2 patients with "id"s A and B and we have 3 blood pressures (bp) measurements from patient A and 2 from patient B.
+```{r tribble take 2}
+df<- tribble(
+  ~id, ~measurement, ~value,
+  "A",        "bp1",    100,
+  "B",        "bp1",    140,
+  "B",        "bp2",    115, 
+  "A",        "bp2",    120,
+  "A",        "bp3",    105
+)
 ```
 
-```{r 2002}
-Year2002 <- QFish |>
-  select(Area, starts_with("2002"))
-
-colnames(Year2002) <- unlist(Year2002[1,])
-
-Year2002 <-
-  Year2002 |>
-  slice(-1) |>
-  rename(Area = Catch) |>
-  mutate(Year = 2002)
+We will take the names from the "measurement"column using the "names_from()" argument and the values from the "values" column using the "values_from()" argument.
+```{r pivoting df dataset take 2}
+df |>
+  pivot_wider(
+    names_from = measurement,
+    values_from = value
+  )
 ```
 
-```{r 2003}
-Year2003 <- QFish |>
-  select(Area, starts_with("2003"))
-
-colnames(Year2003) <- unlist(Year2003[1,])
-
-Year2003 <-
-  Year2003 |>
-  slice(-1) |>
-  rename(Area = Catch) |>
-  mutate(Year = 2003)
+To start the pivoting process, "pivot_wider()" needs to first figure out what will go in the rows and columns. The new column names will be the unique values of "measurement"
+```{r making a new column}
+df |>
+  distinct(measurement) |>
+  pull()
+```
+By default, the rows in the output are determined by all the variables that aren’t going into the new names or values. These are called the "id_cols". Here there is only one column, but in general there can be any number.
+```{r making new columns}
+df |> 
+  select(-measurement,-value) |> 
+  distinct()
 ```
 
-#Joining the tables together 
-```{r Joining the tables}
-QFish_Combined <-
-  bind_rows(Year2001,Year2002,Year2003)
+"pivot_wider()" then combines these results to generate an empty dataframe.
+```{r combining}
+df |> 
+  select(-measurement,-value) |> 
+  distinct() |> 
+  mutate(x = NA,y = NA,z = NA)
 ```
 
+It then fills in all the missing values using the data in the input. In this case, not every cell in the output has a corresponding value in the input as there’s no third blood pressure measurement for patient B, so that cell remains missing.
+
+#Exercise #2
+1)Why are pivot_longer() and pivot_wider() not perfectly symmetrical? Carefully consider the following example.
+
+(Hint: look at the variable types and think about column names) pivot_longer() has a names_ptypes argument, e.g.  names_ptypes = list(year = double()). What does it do?
+```{r exercise 2.1}
+stocks <- tibble(
+  year   = c(2015, 2015, 2016, 2016),
+  half  = c(   1,    2,     1,    2),
+  return = c(1.88, 0.59, 0.92, 0.17)
+)
+
+stocks %>% 
+  pivot_wider(names_from = year, values_from = return) %>% 
+  pivot_longer(`2015`:`2016`, names_to = "year", values_to = "return")
+```
+
+2) Why does this code fail?
+```{r exercise 2.2}
+table4a %>% 
+  pivot_longer(c(1999,2000), names_to="year",values_to="cases")
+#> Error in `pivot_longer()`:
+#> ! Can't subset columns past the end.
+#> ℹ Locations 1999 and 2000 don't exist.
+#> ℹ There are only 3 columns
+```
+
+3)Consider the sample tibble below. Do you need to make it wider or longer? What are the variables?
+```{r exercise 2.3}
+preg <-tribble(
+  ~pregnant, ~male, ~female,
+  "yes",     NA,    10,
+  "no",      20,    12
+)
+```
+
+#Separating and Uniting Data Tables 
+I am now going to use the "separate()" function which separates one column into multiple wherever it is designated.
+
+For this I am using another pre-existing dataset.
+```{r table 3}
+data(table3)
+head(table3)
+glimpse(table3)
+summary(table3)
+```
+
+We need to split the rate column up into two variables: 
+1)Cases 
+2)Population
+
+"Separate()" will take the name of the column we want to split and the names of the columns we want it split into. See the code below.
+```{r separating}
+table3 %>% 
+  separate(rate, into = c("cases", "population"))
+```
+
+pass the character to the sep argument of "separate()". For example, we could rewrite the code above as.
+```{r separating case and population using "\"}
+table3 %>% 
+  separate(rate, into = c("cases", "population"), sep = "/")
+```
+
+Notice the data types above are listed as character ("<chr>") types. This is a default of using "separate()". However, since the values in those columns are actually numbers, we want to ask "separate()" to convert them to better types using "convert = TRUE". Now you can see they are listed as integer types("<int>").
+```{r convserion}
+table3 %>% 
+  separate(rate, into = c("cases", "population"), convert = TRUE)
+```
+
+You can also pass a vector of integers to sep. "Separate()" will interpret the integers as positions to split at. Positive values start at 1 on the far-left of the strings; negative values start at -1 on the far-right of the strings. When using integers to separate strings, the length of sep should be one less than the number of names in into.
+
+You can use this arrangement to separate the last two digits of each year. This makes this data less tidy, but is useful in other cases, as you’ll see in a little bit.
+```{r integer interpretation}
+table3 %>% 
+  separate(year, into = c("century", "year"), sep = 2)
+```
+
+#Using "unite()"
+To perform the inverse of "separate()" we will use "unite()" to combine multiple columns into a single column. In the example below for "table5", we use "unite() to rejoin century and year columns. "unite()" takes a data frame, the name of the new variable and a set of columns to combine using dplyr::select()".
+```{r table 5}
+data(table5)
+head(table5)
+glimpse(table5)
+summary(table5)
+```
+```{r uniting table 5}
+table5 %>% 
+  unite(new, century, year, sep = "")
+```
+Here we need to add "sep =""" because we don’t want any separator (the default is to add an underscore_).
+
+#Handeling Missing Values 
+
+Missing values are very common in datasets. I bet you’ve come across many of them, but how you handle them is a key way to separate you, as a trained marine data scientist, from someone who simply hacks away until it seems ok. Missing values are sometimes populated with "NA" or sometimes they could be simply missing altogether from the data.
+
+#Explicit Missing Values
+The way data is missing matters a lot when tidying your data, so think of it like this: An "NA" (explicit absence) indicates the presence of absent data, and a blank cell just indicates the absence of data (implicit absence). One you know for sure is a no data value, the other you have no idea!
+
+Let’s begin by exploring some tools for creating or eliminating explicit values, i.e. cells where you see an "NA".
+
+From chapter 19 in the textbook:
+A common use for missing values is as a data entry convenience. When data is entered by hand, missing values sometimes indicate that the value in the previous row has been repeated (or carried forward).
+```{r dealing with NA}
+treatment <- tribble(
+  ~person,           ~treatment, ~response,
+  "Derrick Whitmore", 1,         7,
+  NA,                 2,         10,
+  NA,                 3,         NA,
+  "Katherine Burke",  1,         4
+)
+```
+
+You can fill in these missing values with "tidyr::fill()". It works like "select()", taking a set of columns.
+```{r filling}
+treatment |>
+  fill(everything())
+```
+This treatment is sometimes called “last observation carried forward”. You can use the ".direction" argument to fill in missing values that have been generated in more exotic ways.
+
+#Fixed Values
+Sometimes missing values represent some fixed and known value, most commonly 0. You can use "dplyr::coalesce()" to replace them.
+```{r coalescing}
+x <- c(1, 4, 5, 7, NA)
+coalesce(x, 0)
+```
+NOTEl try to catch these kinds of errors when you actually read in the data (see the next section about importing data).
+
+#NaN
+One special type of missing value worth mentioning is NaN or Not a Number. It typically behaves the same as NA but in some rare cases you may need to distinguish it using "is.nan(x)".
+```{r NaN}
+x <- c(NA, NaN)
+x * 10
+#> [1]  NA NaN
+x == 1
+#> [1] NA NA
+is.na(x)
+#> [1] TRUE TRUE
+```
+NaN is most common when you performing a mathematical operation that has an indeterminate result.
+
+#Implicit Missing Values
+So far we’ve talked about missing values that are explicitly missing, i.e. you can see an NA in your data. But missing values can also be implicitly missing, if an entire row of data is simply absent from the data. Let’s illustrate the difference with a simple dataset that records the price of some stock each quarter.
+```{r difference betweeen explicit and implicit}
+stocks <- tibble(
+  year  = c(2020, 2020, 2020, 2020, 2021, 2021, 2021),
+  qtr   = c(   1,    2,    3,    4,    2,    3,    4),
+  price = c(1.88, 0.59, 0.35,   NA, 0.92, 0.17, 2.66)
+)
+```
+
+This dataset has two missing observations:
+1)The price in the fourth quarter of 2020 is explicitly missing, because its value is NA
+2)The price for the first quarter of 2021 is implicitly missing, because it simply does not appear in the dataset.
+
+Sometimes you want to make implicit missings explicit in order to have something physical to work with. In other cases, explicit missings are forced upon you by the structure of the data and you want to get rid of them. Remember how we did this when we used "pivot_wider()"?
+
+Here’s another example where if we pivot "stocks" wider to put the quarter in the columns, both missing values become explicit.
+```{r pivot_wider, implicit and explicit}
+stocks |>
+  pivot_wider(
+    names_from = qtr, 
+    values_from = price
+  )
+```
+NOTE: See here for how to use "tidyr::complete()" to generate missing values in special cases.
+
+#How Can IImport Data into R?
+At some point you will want to move beyond the datasets R provides you and begin to import your own data for analysis. 
+
+In this section, we will explore how to read plain-text rectangular files into R. These include standard .csv files (which you may already be familiar with from other classes or your experiences importing your own data into R). 
+
+Although we will focus only on the simplest forms of data files in this section, many of the data import principles we’ll discuss are also applicable to other data types.
+
+First we will learn how to use the "readr" package (part of the tidyverse) to load simple files into R. You should have already loaded tidyverse in the previous section.
+
+#CSV Files
+The most common file type for representing tabular data is a .csv or ‘comma-separated values.’ There are others, like .dbf or .xlsx, each of which are used by various software. By far the most universal is .csv, which is an extremely simple database structure that is efficient in space (ie. small file size) and agnostic to any one software.
+
+Here is what a simple CSV looks like, where data values are separated by commas, which dictate where the columns will lie.
+```{r CSV file example}
+#DO NOT RUN
+Student ID,Full Name,favourite.food,mealPlan,AGE 1,Sunil Huffmann,Strawberry yoghurt,Lunch only,4 2,Barclay Lynn,French fries,Lunch only,5 3,Jayendra Lyne,N/A,Breakfast and lunch,7 4,Leon Rossini,Anchovies,Lunch only, 5,Chidiegwu Dunkel,Pizza,Breakfast and lunch,five 6,Güvenç Attila,Ice cream,Lunch only,6
+```
+
+Some things to note:
+1)The first row or “header row” gives the column names
+2)The following six rows provide the data. 
+
+The columns are separated by commas, so that each data value has a comma separating it from the value in the next column. Here’s the same data in table format:
+
+But how to get your data into .csv ready for R? Well, most people store their data in excel due to it’s easy of use of data entry. Simply click ‘save as’, then save to csv, so that you have your file as a csv standard.
+
+There are some packages that import directly from excel files, but the fact that excel has tabs and the spreadsheets themselves often have colours and different fonts/formats, can often cause trouble when reading them into R. Better is to save your data from wherever you get it (perhaps from an ArcGIS export, from your data file in excel, etc.) as a .csv file. 
+
+When you have a .csv, it’s generally straightforward to import it into R. As discussed in Module 1, it is best practice to code the loading of your data into your scripts, rather than using the import buttons in RStudio. This promotes reproducibility and can help when you share your code with other.
+
+To read your .csv file into R use "read_csv()" from the "readr" package, which comes installed with the "tidyverse". When using the "read_csv()" function, the first argument is the path to the file on your computer. This is super important! Think about the path as the “address” to the file, as in, where does it live on your computer? You can copy this address from windows explorer by clicking on the navigation bar at the top. 
+
+Copy it and paste it into the function.
+
+Also note R’s peculiar use of slashes - to import data you need to use forward slashes (‘/’) or a double backlash (‘\\’). 
+
+The example below shows that we have a data file called "students.csv" and it lives in a folder called ‘data’ on your computer. X.
+```{r csv file}
+#NOT REAL 
+? read_csv
+students <- read_csv("C://data/students.csv")
+```
+When you run "read_csv()", it prints out a message telling you the number of rows and columns of data, the delimiter that was used, and the column specifications (names of columns organized by the type of data the column contains). It also prints out some information about retrieving the full column specification and how to quiet this message. This message is an integral part of "readr".
+```{r not real data}
+? read_csv
+students <- read_csv("C://data/students.csv")
+```
+
+#Pratical Advice
+Once you read data in, the first step should include assessing whether it is tidy. That means understanding the nature of your variables, and asking the questions:
+1)Are observations in rows?  
+2)Are variables in columns?
+
+You will also need to check whether the data are valid. Are there any odd variables? Things that seems strange, like spelling errors or some other issue that R will have with it? 
+
+Let’s take another look at the "students" data with that in mind.
+
+In the "favourite.food" column, there are a bunch of food items, and then the character string "N/A", which should have been a real "NA" that R will recognize as “not available”. This is something we can address using the na argument. By default, "read_csv()" only recognizes empty strings ("") in this dataset as "NAs", we want it to also recognize the character string "N/A".
+```{r not real student data}
+#DO NOT RUN
+students <- read_csv("data/students.csv", na = c("N/A", ""))
+```
+
+You might also notice that the "Student ID" and "Full Name" columns are surrounded by backticks. That’s because they contain spaces, breaking R’s usual rules for variable names; they’re non-syntactic names (think back to our intro to programming workshop!). To refer to these variables, you need to surround them with backticks, "`".
+```{r again not real dataset}
+#DO NOT RUN
+students |> 
+  rename(
+    student_id = `Student ID`,
+    full_name = `Full Name`
+  )
+```
+
+I will also briefly mention that there are other readr functions which read in other types of data files.
+
+#Exercise #3
+1)Identify what is wrong with each of the following inline CSV files. What happens when you run the code?
+```{ exercise 3.1}
+read_csv("a,b\n1,2,3\n4,5,6")
+read_csv("a,b,c\n1,2\n1,2,3,4")
+read_csv("a,b\n\"1")
+read_csv("a,b\n1,2\na,b")
+read_csv("a;b\n1;3"
+```
+
+#Pipes for more Readable Workflows
+You’ve already used pipes :%>%"
+, and "|>" but it’s worth us having a look at them to really get what’s going on with them. 
+
+Pipes are a tool that allow us to elegantly code data wrangling steps into a series of sequential actions on a single data frame. When used properly, pipes allow us to implement the same wrangling steps with less code.
+
+In this subject we’ve learned how to use quite a few "dplyr" functions for data wrangling, including: 
+1)'filter'
+2)'group_by'
+3)'summarize'
+4)'mutate'
+
+So far we’ve coded each of those functions as separate steps in your code. Let’s look at how pipes can be used to code all of those sequentially in a single statement. This reduces the amount of code written, the number of variables you produce and helps turn your code much more into a ‘sentence’ like structure. 
+The original pipes "%>%" come from the "magrittr" package, which is a part of the "tidyverse". More recently R has implemented ‘native pipes’ "|>", which do the exact same thing.
+
+Remember functions? Yep, that’s right, we’ll use them here. Do go back to the module 1 workshop manual if you need to revisit them. 
+
+Let’s explore pipes using code to tell a kids story about a little bunny named Foo Foo:
+Little bunny Foo Foo
+Went hopping through the forest
+Scooping up the field mice
+And bopping them on the head
+```{r storytime}
+#DO NOT RUN
+foo_foo <- little_bunny()
+```
+
+And we’ll use a function for each key verb: "hop()", "scoop()", and "bop()". Using this object and these verbs, there are (at least) four ways we could retell the story in code:
+1)Save each intermediate step as a new object.
+2)Overwrite the original object many times.
+3)Compose functions.
+4)Use the pipe.
+Let’s do them all sequentially now.
+
+1.Saving each step as a new object:
+```{r Let' try it}
+foo_foo_1 <- hop(foo_foo, through = forest)
+foo_foo_2 <- scoop(foo_foo_1, up = field_mice)
+foo_foo_3 <- bop(foo_foo_2, on = head)
+```
+The main downside of this form is that it forces you to name each intermediate element. If there are natural names, this is a good idea, and you should do it. But many times, like in this example, there aren’t natural names, and you add numeric suffixes to make the names unique. That leads to two problems:
+1)The code is cluttered with unimportant names
+2)You have to carefully increment the suffix on each line.
+
+2. Overwrite the original object instead of creating intermediate objects at each step.
+```{r let's go}
+foo_foo <- hop(foo_foo, through = forest)
+foo_foo <- scoop(foo_foo, up = field_mice)
+foo_foo <- bop(foo_foo, on = head)
+```
+This is less typing (and less thinking), so you’re less likely to make mistakes. 
+However, there are two problems:
+1)Debugging is painful: if you make a mistake you’ll need to re-run the complete pipeline from the beginning.
+2)The repetition of the object being transformed (we’ve written foo_foo six times!) obscures what’s changing on each line.
+
+3. String the function calls together
+```{r let's get it}
+bop(
+  scoop(
+    hop(foo_foo, through = forest),
+    up = field_mice
+  ), 
+  on = head
+)
+```
+
+Here the disadvantage is that you have to read from inside-out, from right-to-left, and that the arguments end up spread far apart (evocatively called the dagwood sandwich problem). In short, this code is hard for a human to consume.
+
+4. USE A PIPE 
+```{r let's try this}
+foo_foo %>%
+  hop(through = forest) %>%
+  scoop(up = field_mice) %>%
+  bop(on = head)
+```
+This form focuses on verbs, not nouns. You can read this series of function compositions like it’s a set of imperative actions. Foo Foo hops, then scoops, then bops.
+
+While pipes are great, they are not always the best or only tool for the job. Here are three examples where you might want to consider a tool other than the pipe:
+1)Your pipes are longer than (say) ten steps. In that case, create intermediate objects with meaningful names. That will make debugging easier and it makes it easier to understand your code.
+2)You have multiple inputs or outputs. If there isn’t one primary object being transformed, but two or more objects being combined together, don’t use the pipe.
+
+You are starting to think about a directed graph with a complex dependency structure. Pipes are fundamentally linear and expressing complex relationships with them will typically yield confusing code.
+
+#Summary
+Well, this was a big workshop! It’s hard to understate how important these tidying skills that you’re developing are. 
+
+Today I think you’ve built a few key life changing skills that one day I hope you look back at and understand how you’ve made some massive progress as a marine biologist, a computer user and as a burgeoning data scientist. These are:
+1)You now understand why your dataframes need to be in an appropriate structure, how to tidy your data to get there and the tools you need to use to do it.
+2)You have the skills now to join datasets together. This skill alone can mean you can massively upscale your thinking about what you can do with your own data (like joining some temperature or tide gauge data to your field data!) 
+
+Now you are here you can start to think about your QFISH assignment. Are you going to do some initial data tidying in excel, or will you use the skills you learnt today to do it all in R? For the reasons I’ve stated (reproducibility in particular) I recommend doing it R. But what matters is that you know what your data needs to look like before you’re ready to plot it. Now you can go ahead and begin your end-to-end analysis of QFISH data in R.
+----------------------------------
