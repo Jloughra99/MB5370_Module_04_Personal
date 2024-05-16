@@ -1,0 +1,9 @@
+---
+Title: 'Workshop 4:Spatial Data in R'
+Author: "Jude Loughran"
+Output: html_document
+Date: "17/05/2024"
+---
+```{r}
+library("tidyverse")
+```

@@ -1,13 +1,9 @@
 ---
-title: 'Workshop 3: Data Wrangling'
-author: "Jude Loughran"
-date: "2024-05-16"
-output: html_document
+Title: 'Workshop 3:Data Wrangling'
+Author: "Jude Loughran"
+Output: html_document
+Date: "16/05/2024"
 ---
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 Tibbles are used in place of traditional data frames. They are slightly adjusted data frames designed to keep up with recent advances in R. Tibbles allow us to handle issues associated with aging program languages without breaking existing codes. So from now we are learning how to used tibbles in the "tidyverse".
 
 ##Tidying data using "Tidyr"

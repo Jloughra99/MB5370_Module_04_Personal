@@ -1,5 +1,5 @@
 ---
-Title: "Workshop 1: Introduction"
+Title: "Workshop 1:Introduction"
 Author: "Jude Loughran"
 Output: html_document
 Date: "14/05/2024"
