@@ -8,7 +8,64 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-##Install and load tidyverse packages
+Tibbles are used in place of traditional data frames. They are slightly adjusted data frames designed to keep up with recent advances in R. Tibbles allow us to handle issues associated with aging program languages without breaking existing codes. So from now we are learning how to used tibbles in the "tidyverse".
+
+##Tidying dats using "Tidyr"
+This section is going to show you how to organize data into tidy data which can be used in the "tidyverse". Tidying data lets us spend more time on analysis rather than data manipulation.
+
+Now you will be introduced to tidy data and the associated tools in the "tidyr" package. "Tidyr" is a core part of "tidyverse". First remember to load "tidyverse".
 ```{r}
 library("tidyverse")
 ```
+
+```{r QFish shark}
+#Saved fixed raw data into a .CSV to data folder and import into R
+QFish
+```
+#Tidying QFish data
+Pivot the data to make it neater 
+```{r 2001}
+Year2001 <- QFish |>
+  select(Area, starts_with("2001"))
+
+colnames(Year2001) <- unlist(Year2001[1,])
+
+Year2001 <-
+  Year2001 |>
+  slice(-1) |>
+  rename(Area = Catch) |>
+  mutate(Year = 2001)
+```
+
+```{r 2002}
+Year2002 <- QFish |>
+  select(Area, starts_with("2002"))
+
+colnames(Year2002) <- unlist(Year2002[1,])
+
+Year2002 <-
+  Year2002 |>
+  slice(-1) |>
+  rename(Area = Catch) |>
+  mutate(Year = 2002)
+```
+
+```{r 2003}
+Year2003 <- QFish |>
+  select(Area, starts_with("2003"))
+
+colnames(Year2003) <- unlist(Year2003[1,])
+
+Year2003 <-
+  Year2003 |>
+  slice(-1) |>
+  rename(Area = Catch) |>
+  mutate(Year = 2003)
+```
+
+#Joining the tables together 
+```{r Joining the tables}
+QFish_Combined <-
+  bind_rows(Year2001,Year2002,Year2003)
+```
+

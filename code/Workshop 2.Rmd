@@ -1,33 +1,30 @@
 ---
-title: 'Workshop 2: Using ggplot2 for Communication'
-author: "Jude Loughran"
-date: "2024-05-15"
-output: html_document
----
-#Workshop2: Using ggplot2 for Communication
+Title: "Workshop 2:Using ggplot2 for Communication"
+Author: "Jude Loughran"
+Output: html_document
+Date: "15/05/2024"
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-##Install and load tidyverse packages
+#Install Tidyverse
 ```{r}
 library("tidyverse")
 ```
 
-##Labels 
-Good labels on plots can help communicate key findings and comply with formatting requirements of an outlet (scientific journal). In "ggplot2" labels can be added with the "labs()" function.
-
-Let's start with a title.
+#Labels 
+Good labels on plots can help communicate key findings and comply with formatting requirements of an outlet (scientific journal). In "ggplot2" labels can be added with the "labs()" function. Let's start with a title.
 ```{r}
 ggplot(mpg,aes(displ,hwy)) +
   geom_point(aes(color=class)) +
-  geom_smooth(se.e=FALSE) +
+  geom_smooth(se=FALSE) +
   labs(title="Fuel efficiency generally decreases with engine size")
 ```
+
 If you want to add more text you can use other functions:
-1)"Subtitle" - This adds more details in a smaller font under the title.
-2)"Caption" - This adds text at the bottom right of the plot. 
+1)"Subtitle": This adds more details in a smaller font under the title.
+2)"Caption": This adds text at the bottom right of the plot. 
 ```{r}
 ggplot(mpg,aes(displ,hwy)) +
   geom_point(aes(color=class)) +
@@ -38,6 +35,7 @@ ggplot(mpg,aes(displ,hwy)) +
     caption="Data from fueleconomy.gov"
   )
 ```
+
 You can also use "labs()" to replace axis labels and legend titles.
 ```{r}
 ggplot(mpg,aes(displ,hwy)) +
@@ -62,18 +60,16 @@ ggplot(mpg,aes(displ,hwy)) +
   geom_point(aes(colour=class)) +
   geom_text(aes(label=model),data = best_in_class)
 ```
-To handle the label overlap you can use "nudge()" to move the text a certain amount. 
 
-Labels allow for customisation and actions like highlighting the minimum or maximum values which you can get using base R packages.
+To handle the label overlap you can use "nudge()" to move the text a certain amount.Labels allow for customization and actions like highlighting the minimum or maximum values which you can get using base R packages.
 
-##Scales 
-Changing the default scales on "ggplot2" can help you customise your plots and help to convey the main message of your resutls.
-
-Normally, "ggplot2" automatically adds scales but when you type
+#Scales 
+Changing the default scales on "ggplot2" can help you customize your plots and help to convey the main message of your results. Normally, "ggplot2" automatically adds scales but when you type.
 ```{r}
 ggplot(mpg,aes(displ,hwy)) +
   geom_point(aes(colour=class))
 ```
+
 "Ggplot2" adds default scales behind the scenes, but if you want to tweak them you can do by offering values to the scale parameters by adding numbers in the appropriate scale arguments.
 
 Remember to provide limits you need to offer a character vector showing the start and end of the limits (e.g.c(0,12)). Note that "?scale_x_continuous()" has alot of other arguments, so don't forget to explicitly state the argument you're providing these limits for (e.g. limits=c(0,12)).
@@ -85,7 +81,7 @@ ggplot(mpg, aes(displ,hwy)) +
   scale_colour_discrete()
 ```
 
-##Axis title 
+#Axis Title 
 You can change the ticks on your axes. Breaks control the position of the ticks and you can use labels as an argument to change the text label associated with ticks.
 ```{r}
 ggplot(mpg,aes(displ,hwy)) +
@@ -100,7 +96,7 @@ seq(15,40,by=5)
 ```
 The code above outputs a sequence of numbers starting at 15 and ending at 40 increasing incrementally by 5.
 
-Similarly, you can use "labels" set to NULL to supress the labels altogether. This is sometimes an option if you're trying to format plots in a certain way.
+Similarly, you can use "labels" set to NULL to suppress the labels altogether. This is sometimes an option if you're trying to format plots in a certain way.
 ```{r}
 ggplot(mpg, aes(displ,hwy)) +
   geom_point() +
@@ -108,10 +104,8 @@ ggplot(mpg, aes(displ,hwy)) +
   scale_y_continuous(labels=NULL)
 ```
 
-##Legends and colour schemes 
-Sometimes if you want to change the position of your legend so you need to control the overall position of the legend. To do this use the "theme()" function. 
-
-Run each line below separately to see how it changes the plot of "base".
+#Legends and Colour Schemes 
+Sometimes if you want to change the position of your legend so you need to control the overall position of the legend. To do this use the "theme()" function. Run each line below separately to see how it changes the plot of "base".
 ```{r}
 base <- ggplot(mpg,aes(displ,hwy)) +
   geom_point(aes(colour=class))
@@ -137,15 +131,15 @@ base <- ggplot(mpg,aes(displ,hwy)) +
 base+theme(legend.position="right")
 ```
 
-You can also use "legend.position="none"" to supress the display of the legend altogether.
+You can also use "legend.position="none"" to suppress the display of the legend altogether.
 ```{r}
 base <- ggplot(mpg,aes(displ,hwy)) +
   geom_point(aes(colour=class))
 base+theme(legend.position="none")
 ```
-##Replacing a scale
-It is very useful to plot transformations of the varaibles. For example as we have seen with the diamond proces, it's easier to see the precise relationship between carat and price of we  log transform them using a "ggplot2" function to scale precisely for this purpose. 
-There are 2 types of scales you will likely want to switch out:
+
+#Replacing a Scale
+It is very useful to plot transformations of the variables. For example as we have seen with the diamond process, it's easier to see the precise relationship between carat and price of we log transform them using a "ggplot2" function to scale precisely for this purpose. There are 2 types of scales you will likely want to switch out:
 1)Continuous 
 ```{r}
 ggplot(diamonds,aes(carat,price)) +
@@ -153,8 +147,8 @@ ggplot(diamonds,aes(carat,price)) +
   scale_x_log10() + 
   scale_y_log10()
 ```
-2)Colour
-From a visualisation point of view, this is the most important chagnes you can make to a base "ggplot"
+
+2)Colour: From a visualization point of view, this is the most important changes you can make to a base "ggplot".
 ```{r}
 ggplot(mpg,aes(displ,hwy)) +
   geom_point(aes(color=drv))
@@ -163,12 +157,14 @@ ggplot(mpg,aes(displ,hwy)) +
   geom_point(aes(color=drv)) +
   scale_colour_brewer(palette="Set1")
 ```
-If there are only a few colours, you can add a redundant shape mapping.This will also help ensure your plot is interpretable in black and white.
+
+If there are only a few colours, you can add a redundant shape mapping. This will also help ensure your plot is interpretable in black and white.
 ```{r}
 ggplot(mpg,aes(displ,hwy)) +
   geom_point(aes(color=drv,shape=drv)) +
   scale_colour_brewer(palette="Set1")
 ```
+
 The ColorBrewer scales are documented online at http://colorbrewer2.org/. There are a range of different colour schemes you can import such as this, so read more about them in the ggplot2 cookbook: http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/.
 
 When you have predefined colours you want to use you can set them yourself using "scale_colour_manual()".
@@ -180,8 +176,9 @@ presidential %>%
     geom_segment(aes(xend = end, yend = id)) +
     scale_colour_manual(values= c(Republican="red",Democratic="blue"))
 ```
+
 To use another package do this. 
-Notes:
+NOTe:
 1)Tibble is a fake dataset.
 2)"geom_hex()" is a new geom
 ```{r}
@@ -204,7 +201,7 @@ ggplot(df,aes(x,y)) +
   coord_fixed()
 ```
 
-##Themes 
+#Themes 
 Can customize the entire theme of your plot. "Ggplot2" has 8 themes by default. There are more are included in add-on packages like ggthemes. (https://github.com/jrnold/ggthemes
 ```{r}
 ggplot(mpg,aes(displ,hwy)) +
@@ -233,6 +230,7 @@ ggplot(mpg,aes(displ,hwy)) +
   geom_smooth(se=FALSE) +
   theme_dark()
 ```
+
 One particularly nice thing you can do is to develop your own themes simply by setting some or all of the arguments to "theme()" yourself. Here’s one I wrote so that my plots are always the same style.
 ```{r}
  theme (panel.border = element_blank(),
@@ -248,11 +246,10 @@ One particularly nice thing you can do is to develop your own themes simply by s
         axis.text.x=element_text(colour="black"),
         text=element_text(family="Arial")) 
 ```
-##Saving and exporting your plots
+
+#Saving and Exporting Plots
 Now that you've developed your plot, you want to save it to disk in some format that allows you to import it into your report or to share it with the world. In general, the best way to make a single file will be to export it using "ggsave()".
 ```{r}
 ggplot(mpg,aes(displ,hwy)) + geom_point()
 ggsave("my-plot.pdf")
 ```
---------------------------------------------------------------------------------
-
