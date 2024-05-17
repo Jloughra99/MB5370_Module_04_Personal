@@ -549,5 +549,39 @@ ggplot(data=mpg) +
 #First step is to save data into the data folder
 
 #Second step is to import data 
+```{r import}
+library(readr)
+SharkMeta <- read_csv("data/SharkMeta.csv")
+View(SharkMeta)
+```
 
-#Third step create 
+#Third step create a basic barplot
+```{r}
+ggplot(data=SharkMeta, aes(x=SEX)) +
+  geom_bar(fill = "pink", color ="purple") +
+  labs(title ="Distribution of Shark Sexes",
+       x="Sex",
+       y="Individual tag count") + #Change "y" label
+  theme_minimal() +
+```
+
+#Fourth step create a more detailed barplot
+```{r shark barplot}
+#Define your custom color palette
+my_colors <- c("Female" = "pink", "Male" = "lightblue", "Unknown" = "gray")
+
+#Create the bar plot with custom colors
+ggplot(data = SharkMeta, aes(x = SEX)) +
+  geom_bar(fill = my_colors, color = "purple") +
+  scale_x_discrete(labels = c("F" = "Female", "M" = "Male", "U" = "Unknown")) +
+  labs(title = "Distribution of Shark Sexes",
+       x = "Sex",
+       y = "Individual tag count") +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 14, color = "black", face = "plain"),
+        axis.title = element_text(size = 14, color = "black", face = "bold"),
+        axis.line = element_line(color = "black", size = 0.5),
+        panel.grid.major = element_line(color = "gray", linetype = "dotted"),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "white", color = "black"))
+```
