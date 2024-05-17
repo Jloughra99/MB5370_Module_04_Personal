@@ -543,3 +543,11 @@ ggplot(data=mpg) +
   #geom_point(mapping=aes(x=displ,y=hwy),position="jitter")
   geom_point(mapping=aes(x=displ,y=hwy))
 ```
+----------------------------------
+#Plot reconstruction 
+
+#First step is to save data into the data folder
+
+#Second step is to import data 
+
+#Third step create 
