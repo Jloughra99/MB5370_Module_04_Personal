@@ -123,8 +123,8 @@ A great introduction to "sf" can be found in "Geocomputation in R", which is fre
 
 Now, let’s turn our data into a ‘simple features collection’.
 ```{r simple features collection}
-scopepod_raw<-st_as_sf(copepods_raw,coords=c("longitude", "latitude"),
-                       crs=4326)
+copepods_raw <- st_as_sf(copepods_raw, coords = c("longitude", "latitude"), 
+                 crs = 4326)
 ```
 NOTE: 
 1)"st_as_sf": Converts different data types to simple features. 
@@ -164,11 +164,11 @@ To more accurately map our data in 2 dimensions, we need to decide how to ‘pro
 There are many ways to do the projection depending on where we are in the world and what we’re most interested in preserving (e.g., angles vs. distances vs. area). Projections are defined by a projected coordinate reference system (PCS), and spatial packages in R use the software PROJ to do this.
 
 #Feature Collection (Points)
-Let’s now look at what we created with scopepod_raw. 
-```{r scopepod_raw}
-scopepod_raw
+Let’s now look at what we created with copepod_raw. 
+```{r copepods_raw}
+copepods_raw
 ```
-The data table in "scopepod_raw" looks much like "copepod_raw" did, but note it now has a geometry column. This is where the coordinates (just one point for each data row) are stored. More complex simple features could have a series of points, lines, polygons or other types of shapes nested in each row of the geometry column.
+The data table in "copepod_raw" looks much like "copepod_raw" did, but note it now has a geometry column. This is where the coordinates (just one point for each data row) are stored. More complex simple features could have a series of points, lines, polygons or other types of shapes nested in each row of the geometry column.
 
 The nice thing about "sf" is that because the data is basically a dataframe with a geometry, we can use all the operations that work on dataframes on sf simple features collections.
 
@@ -181,19 +181,19 @@ So in summary, a simple feature is like a shapefile, in that it holds a lot of d
 #Cartography
 Now let’s get into the mapping. "SF" has simple plotting features, like this.
 ```{r  mapping}
-plot(scopepod_raw["richness_raw"])
+plot(copepods_raw["richness_raw"])
 ```
 Here we have only plotted the richness column. If we used "plot(sdat)" it would create a panel for every variable in our dataframe. In "sf", we can use square brackets ["richness_raw"] to select a single variable.
-```{r plotting scopepod_raw}
-plot(scopepod_raw)
+```{r plotting copepods_raw}
+plot(copepods_raw)
 ```
 
 #Thematic Maps for Communication
 So far in this module we’ve used "ggplot2" for doing our plots and graph-based data vis, but there are many other ones out there that might offer some different functionalities. The same goes for mapping, there are many nice packages out there to help make pretty maps. 
 
-In this module we will use "tmap". "tmap" works similarly to "ggplot2" in that we build and add on layers. Here we only have one layer from sdcopepod_raw. We declare the layer with "tm_shape() (in this case scopepod_raw), then the plot type with the following command.
+In this module we will use "tmap". "tmap" works similarly to "ggplot2" in that we build and add on layers. Here we only have one layer from copepod_raw. We declare the layer with "tm_shape() (in this case copepod_raw), then the plot type with the following command.
 ```{r using "tmap"}
-tm_shape(scopepod_raw)+
+tm_shape(copepods_raw)+
   tm_dots(col="richness_raw")
 ```
 "tm_dots":Plots dots of the coordinates. Other options are "tm_polygons" and "tm_symbols".
@@ -201,16 +201,13 @@ We’ve chosen "richness_raw" as the color scale.
 
 NOTE:you can customize these plots in a number of ways.
 
-Use "tmap_save" to save the map to your working directory. Remember to change the output path if you need to save it to a different folder.
-
-```{r getwd()}
+Use "tmap_save" to save the map to your working directory. Remember to change the output path if you need to save it to a different folder.`
+```{r getwd}
 getwd()
 ```
 
-
-```{r "tmap_save}
-tmap_save("../output", filename= "Richness-Map.png",
-          width =600, height = 600)
+```{r tmap_save}
+tmap_save("output", filename = "richness-raw.png", width = 600, height = 600)
 ```
 
 #Mapping Spaitial Polygons as Layers 
@@ -224,7 +221,24 @@ A better format than shapefile is the Geopackage which can save and compress mul
 
 We are working with shapefiles in this case study because it is still the most likely format you’ll encounter when someone sends you a spatial dataset, but I encourage you to save your personal data in the .gpkg format as you move forward.
 
-We can read shapefiles directly into R with the st_read command (which is like read_csv, but for spatial files):
+We can read shapefiles directly into R with the st_read command (which is like read_csv, but for spatial files)
+
+Below is to make sure I have the right working directory and so I know how to correct any mistakes.
+```{r}
+getwd()
+```
+
+```{r reading the "Aus" spatial data}
+aus <- st_read("../data/data-for-course/spatial-data/Aussie/Aussie.shp")
+```
+```{r The "Aus_shelf" data}
+shelf <- st_read("../data/data-for-course/spatial-data/aus_shelf/aus_shelf.shp")
+```
+
+Checking the data
+```{r checking the data}
+aus
+```
 
 #Mapping Your Polygons 
 Again, "tmap" makes it very straightforward to make a map of polygons.
@@ -233,7 +247,122 @@ tm_shape(shelf) +
   tm_polygons()
 ```
 
+Remember we can make a thematic map by layering it up just as we do for plots in "ggplot2". Here we have indicated the shape of our map ("shelf") and we have added a command "bbox = sdat" to expand the extent of the map so it depicts all of our copepod data points. We then add the shape of Australia ("aus") on top of the shelf, and finally our copepod data ("sdat") in the form of points using "tm_dots()".
+```{r tm_shape}
+tm_shape(shelf, bbox = copepods_raw) + 
+  tm_polygons() +
+  tm_shape(aus) + 
+  tm_polygons() + 
+  tm_shape(copepods_raw) + 
+  tm_dots()
+```
 
+#Exploring t_map
+Remember, errors may be frustrating but they are a great way to learn! Use "?tmap" in R studio to see what the package has to offer.
 
+To learn about a quick way to change the style, type "tmap_style("beaver")" then run your map code again. This function is similar to "ggplot" themes, and will allow you to style your maps in a way you find effective for best communicating your findings. 
 
+Now open the "tmap" vignette. It can be accessed via coding or web search ‘r tmap’.
+```{r tmap}
+vignette('tmap-getstarted')
+```
 
+After installing tmap, the following lines of code should create the map shown below
+```{r t_map world}
+library(tmap)
+data("World")
+
+tm_shape(World) +
+    tm_polygons("HPI")
+```
+
+Each map can be plotted as a static image or viewed interactively using "plot" and "view" modes, respectively. The mode can be set with the function tmap_mode, and toggling between the modes can be done with the ‘switch’ ttm() (which stands for toggle thematic map.
+```{r interactive}
+tmap_mode("view")
+
+tm_shape(World) +
+    tm_polygons("HPI")
+```
+
+A shape is a spatial object (with a class from "sf", "sp", "stars", or "raster"). Multiple shapes and also multiple layers per shape can be plotted
+```{r Multiple shapes and layers}
+data(World, metro, rivers, land)
+
+tmap_mode("plot")
+## tmap mode set to plotting
+tm_shape(land) +
+    tm_raster("elevation", palette = terrain.colors(10)) +
+tm_shape(World) +
+    tm_borders("white", lwd = .5) +
+    tm_text("iso_a3", size = "AREA") +
+tm_shape(metro) +
+    tm_symbols(col = "red", size = "pop2020", scale = .5) +
+tm_legend(show = FALSE)
+```
+Facets can be created in three ways:
+
+1)By assigning multiple variable names to one aesthetic (in this example the first argument of tm_polygons
+```{r facet #1}
+tmap_mode("view")
+tm_shape(World) +
+    tm_polygons(c("HPI", "economy")) +
+    tm_facets(sync = TRUE, ncol = 2)
+```
+2)By splitting the spatial data with the by argument of tm_facets
+```{r facets #2}
+tmap_mode("plot")
+
+data(NLD_muni)
+
+NLD_muni$perc_men <- NLD_muni$pop_men / NLD_muni$population * 100
+
+tm_shape(NLD_muni) +
+    tm_polygons("perc_men", palette = "RdYlBu") +
+    tm_facets(by = "province")
+```
+3)By using the tmap_arrange function
+```{r facet #3}
+tmap_mode("plot")
+
+data(NLD_muni)
+tm1 <- tm_shape(NLD_muni) + tm_polygons("population", convert2density = TRUE)
+tm2 <- tm_shape(NLD_muni) + tm_bubbles(size = "population")
+
+tmap_arrange(tm1, tm2)
+```
+
+Tiled basemaps can be added with the layer function "tm_basemap". Semi-transparent overlay maps (for example annotation labels) can be added with "tm_tiles".
+```{r basemaps}
+tmap_mode("view")
+tm_basemap("Stamen.Watercolor") +
+tm_shape(metro) + tm_bubbles(size = "pop2020", col = "red") +
+tm_tiles("Stamen.TonerLabels")
+```
+
+The functions "tm_layout" and "tm_view" are used to specify the map layout and the interactive aspects respectively. These functions can be used in the same way as the layer functions.
+```{r styling}
+tmap_mode("plot")
+
+tm_shape(World) +
+    tm_polygons("HPI") +
+tm_layout(bg.color = "skyblue", inner.margins = c(0, .02, .02, .02))
+```
+
+These options, as well as a couple of others, can also be set within with "tmap_options" The main advantage is that these options are set globally, so they do not have to be specified in each map, for the duration of the session.
+```{r options}
+tmap_options(bg.color = "black", legend.text.color = "white")
+
+tm_shape(World) +
+    tm_polygons("HPI", legend.title = "Happy Planet Index")
+```
+
+A style is a certain configuration of the "tmap" options.
+```{r classic}
+tmap_style("classic")
+
+tm_shape(World) +
+    tm_polygons("HPI", legend.title = "Happy Planet Index")
+```
+
+#Exporting
+You can save and export it by using "tmap_save()" to save your map as either an .html file or an image file (.JPG, .PNG etc.) to your designated folder.
