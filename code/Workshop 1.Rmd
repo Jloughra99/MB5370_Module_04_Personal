@@ -4,10 +4,6 @@ Author: "Jude Loughran"
 Output: html_document
 Date: "14/05/2024"
 ---
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 #Installing and Loading Tidyverse
 ```{r}
 library("tidyverse")
