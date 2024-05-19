@@ -572,4 +572,29 @@ Today I think you’ve built a few key life changing skills that one day I hope 
 2)You have the skills now to join datasets together. This skill alone can mean you can massively upscale your thinking about what you can do with your own data (like joining some temperature or tide gauge data to your field data!) 
 
 Now you are here you can start to think about your QFISH assignment. Are you going to do some initial data tidying in excel, or will you use the skills you learnt today to do it all in R? For the reasons I’ve stated (reproducibility in particular) I recommend doing it R. But what matters is that you know what your data needs to look like before you’re ready to plot it. Now you can go ahead and begin your end-to-end analysis of QFISH data in R.
-----------------------------------
+--------------------------------------------------------------------------------
+#QFish data 
+
+#First step
+Import QFish data
+
+#Second step
+Decide what I want to show 
+
+```{r QFish}
+#Save QFish data as .CSV and add it to data folder to import it into R
+QFish
+```
+Trying "pivot_longer()"
+```{r "pivot_longer}
+QFish |>
+  pivot_longer(
+    cols=("Catch"),
+    names_to = "Year",
+    values_to = "Area",
+    values_drop_na=TRUE
+  )
+```
+  
+
+
