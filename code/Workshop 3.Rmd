@@ -573,28 +573,59 @@ Today I think you’ve built a few key life changing skills that one day I hope 
 
 Now you are here you can start to think about your QFISH assignment. Are you going to do some initial data tidying in excel, or will you use the skills you learnt today to do it all in R? For the reasons I’ve stated (reproducibility in particular) I recommend doing it R. But what matters is that you know what your data needs to look like before you’re ready to plot it. Now you can go ahead and begin your end-to-end analysis of QFISH data in R.
 --------------------------------------------------------------------------------
-#QFish data 
+#End-to-End Analysis 
 
 #First step
-Import QFish data
-
-#Second step
-Decide what I want to show 
-
-```{r QFish}
-#Save QFish data as .CSV and add it to data folder to import it into R
-QFish
+#Import QFish data
+```{r import QFish}
+library(tidyverse)
+library(readr)
+QFish <- read_csv("../data/QFish.csv")
+View(QFish)
 ```
-Trying "pivot_longer()"
-```{r "pivot_longer}
-QFish |>
-  pivot_longer(
-    cols=("Catch"),
-    names_to = "Year",
-    values_to = "Area",
-    values_drop_na=TRUE
-  )
+#Second step 
+#Plotting my data
+```{r plotting}
+ggplot(data=QFish)+
+  geom_point(mapping = aes(x=Year,y=Total, colour = Area))
 ```
-  
+This first attempt was successful but the axes ranges were not what I wanted so I had to go and check the structure of my data to see what I had to change to fix the axes ranges.
 
+#Third step 
+#Chaecking data structre 
+```{r checking the data's structure}
+str(QFish)
+```
+This command pointed out my year column was a character which is why I was getting decimal points so I changed the data type to a factor to get rid of this problem.
 
+#Fourth step 
+#Changing x-axis
+```{r changing to factor}
+QFish$Year<-factor(QFish$Year)
+```
+After this was done I re-checked my data to make sure it was changed
+
+#Fifth step 
+#Recheck data structure
+```{r re-checking structure}
+str(QFish)
+
+```
+After this was fixed I re-ran my plot to make sure the axis range had changed.
+
+#Sixth step
+#Running plot take 2
+```{r re-running}
+ggplot(data=QFish)+
+  geom_point(mapping = aes(x=Year,y=Total, colour = Area))
+```
+The x-axis range was fixed and now I wanted to change my y-axis range to increase to 150 instead of 100.
+
+#Seventh step 
+#Changing y-axis
+```{r changing x axis}
+ggplot(data=QFish)+
+  geom_point(mapping = aes(x=Year,y=Total, colour = Area))+
+  scale_y_continuous(limits=c(0,150))
+```
+This was successful and I am happy with my plot.

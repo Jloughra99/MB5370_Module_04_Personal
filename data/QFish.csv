@@ -1,15 +1,40 @@
-Area,2001,2001,2002,2002,2003,2003
-Catch ,Shark,Turtle,Shark,Turtle,Shark,Turtle
-Bribie Island,,,,,,
-Bundaberg,62,12,62,7,50,5
-Cairns,79,4,46,6,66,1
-Capricorn Coast,87,,91,2,66,2
-Gladstone,32,,18,1,30,3
-Gold Coast,85,27,73,22,75,8
-Mackay,134,2,94,5,82,4
-Nth Stradbroke Is.,20,6,16,6,8,14
-Rainbow Beach,35,2,31,1,24,3
-Sunshine Coast North,76,6,91,2,56,2
-Sunshine Coast South,,,,,,
-Sunshine Coast South & Bribie Island,35,4,40,11,35,5
-Townsville,89,3,59,2,58,5
+Area ,Year ,Catch,Total
+Bribie Island,2001,Shark,0
+Bribie Island,2002,Shark,0
+Bribie Island,2003,Shark,0
+Bundaberg,2001,Shark,62
+Bundaberg,2002,Shark,62
+Bundaberg,2003,Shark,50
+Cairns,2001,Shark,79
+Cairns,2002,Shark,46
+Cairns,2003,Shark,66
+Capricorn Coast,2001,Shark,87
+Capricorn Coast,2002,Shark,91
+Capricorn Coast,2003,Shark,66
+Gladstone,2001,Shark,32
+Gladstone,2002,Shark,18
+Gladstone,2003,Shark,30
+Gold Coast,2001,Shark,85
+Gold Coast,2002,Shark,73
+Gold Coast,2003,Shark,75
+Mackay,2001,Shark,134
+Mackay,2002,Shark,94
+Mackay,2003,Shark,82
+Nth Stradbroke Is.,2001,Shark,20
+Nth Stradbroke Is.,2002,Shark,16
+Nth Stradbroke Is.,2003,Shark,8
+Rainbow Beach,2001,Shark,35
+Rainbow Beach,2002,Shark,31
+Rainbow Beach,2003,Shark,24
+Sunshine Coast North,2001,Shark,76
+Sunshine Coast North,2002,Shark,91
+Sunshine Coast North,2003,Shark,56
+Sunshine Coast South,2001,Shark,0
+Sunshine Coast South,2002,Shark,0
+Sunshine Coast South,2003,Shark,0
+Sunshine Coast South & Bribie Island,2001,Shark,35
+Sunshine Coast South & Bribie Island,2002,Shark,40
+Sunshine Coast South & Bribie Island,2003,Shark,35
+Townsville,2001,Shark,89
+Townsville,2002,Shark,59
+Townsville,2003,Shark,58
