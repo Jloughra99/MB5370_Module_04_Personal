@@ -1,8 +1,8 @@
 ---
-Title: "Workshop 1:Introduction"
-Author: "Jude Loughran"
+Title: Workshop 1:Introduction
+Author: Jude Loughran
 Output: html_document
-Date: "14/05/2024"
+Date: 14/05/2024
 ---
 #Installing and Loading Tidyverse
 ```{r}
@@ -368,7 +368,7 @@ Then, run the code in R and check your predictions.
 ggplot(data=mpg,mapping=aes(x=displ,y=hwy)) + 
   geom_boxplot(mapping=aes(color=class)) 
 
-ggplot(data=mpg,mapping=aes(x=displ,y=hwy)) + 
+ggplot(data=mpg,mapping=aes(x=displ)) + 
   geom_histogram(mapping=aes(color=class)) 
 
 ggplot(data=mpg,mapping=aes(x=displ,y=hwy)) + 
@@ -547,18 +547,19 @@ ggplot(data=mpg) +
 #Second step is to import data 
 ```{r import}
 library(readr)
-SharkMeta <- read_csv("data/SharkMeta.csv")
+SharkMeta <- read_csv("~/MT 1/Module 4/Data_Analysis/MB5370_Module_04_Personal/data/SharkMeta.csv")
 View(SharkMeta)
 ```
 
 #Third step create a basic barplot
 ```{r}
-ggplot(data=SharkMeta, aes(x=SEX)) +
-  geom_bar(fill = "pink", color ="purple") +
-  labs(title ="Distribution of Shark Sexes",
-       x="Sex",
-       y="Individual tag count") + #Change "y" label
-  theme_minimal() +
+# Assuming SharkMeta is your dataset
+ggplot(data = SharkMeta, aes(x = SEX)) +
+  geom_bar(fill = "pink", color = "purple") +
+  labs(title = "Distribution of Shark Sexes",
+       x = "Sex",
+       y = "Individual Tag Count") + # Changed "y" label
+  theme_minimal()
 ```
 
 #Fourth step create a more detailed barplot

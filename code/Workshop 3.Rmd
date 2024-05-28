@@ -1,8 +1,8 @@
 ---
-Title: 'Workshop 3:Data Wrangling'
-Author: "Jude Loughran"
+Title: Workshop 3:Data Wrangling
+Author: Jude Loughran
 Output: html_document
-Date: "16/05/2024"
+Date: 16/05/2024
 ---
 Tibbles are used in place of traditional data frames. They are slightly adjusted data frames designed to keep up with recent advances in R. Tibbles allow us to handle issues associated with aging program languages without breaking existing codes. So from now we are learning how to used tibbles in the "tidyverse".
 

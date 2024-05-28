@@ -178,8 +178,8 @@ NOTe:
 1)Tibble is a fake dataset.
 2)"geom_hex()" is a new geom
 ```{r}
-install.packages('viridis')
-install.packages('hexbin')
+#install.packages('viridis')
+#install.packages('hexbin')
 library(viridis)
 library(hexbin)
 
